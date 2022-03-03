@@ -16,7 +16,9 @@ enum Init {
     Default,
     Random,
 }
-static INITIALIZER: Init = Init::Random;
+const INITIALIZER: Init = Init::Random;
+const UNIVERSE_WIDTH: u32 = 64;
+const UNIVERSE_HEIGHT: u32 = 64;
 
 #[wasm_bindgen]
 #[repr(u8)]
@@ -69,8 +71,8 @@ impl Universe {
     }
 
     pub fn new() -> Universe {
-        let width = 64;
-        let height = 64;
+        let width = UNIVERSE_WIDTH;
+        let height = UNIVERSE_HEIGHT;
 
         let cells = (0..width * height)
             .map(|i| {
