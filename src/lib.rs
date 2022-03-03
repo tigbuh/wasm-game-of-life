@@ -1,5 +1,7 @@
 mod utils;
 
+extern crate js_sys;
+
 use std::fmt;
 use wasm_bindgen::prelude::*;
 
@@ -8,6 +10,13 @@ use wasm_bindgen::prelude::*;
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
+#[allow(dead_code)]
+enum Init {
+    Default,
+    Random,
+}
+static INITIALIZER: Init = Init::Random;
 
 #[wasm_bindgen]
 #[repr(u8)]
@@ -65,10 +74,18 @@ impl Universe {
 
         let cells = (0..width * height)
             .map(|i| {
-                if i % 2 == 0 || i % 7 == 0 {
-                    Cell::Alive
+                if matches!(INITIALIZER, Init::Random) {
+                    if js_sys::Math::random() < 0.5 {
+                        Cell::Alive
+                    } else {
+                        Cell::Dead
+                    }
                 } else {
-                    Cell::Dead
+                    if i % 2 == 0 || i % 7 == 0 {
+                        Cell::Alive
+                    } else {
+                        Cell::Dead
+                    }
                 }
             })
             .collect();
